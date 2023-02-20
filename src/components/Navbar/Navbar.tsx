@@ -1,7 +1,12 @@
 import React, { FC } from "react";
+import { Flex } from "@chakra-ui/react";
 
 const Navbar: FC = ({}) => {
-  return <div>Navbar</div>;
+  return (
+    <Flex bg='white' height='44px' padding='6px 12px'>
+      <Flex></Flex>
+    </Flex>
+  );
 };
 
 export default Navbar;
