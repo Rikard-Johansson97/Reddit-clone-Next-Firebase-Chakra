@@ -1,35 +1,54 @@
+import { RootState } from "@/store/store";
 import {
-  useDisclosure,
-  Button,
+  Flex,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  ModalOverlay,
 } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { FC } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthModalState, closeModal } from "../../../store/authModalSlice";
+import AuthInputs from "./AuthInputs";
 
 const AuthModal: FC = ({}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const authModal = useSelector<RootState, AuthModalState>(
+    (state) => state.authModal
+  );
+  const dispatch = useDispatch();
+  const handleCloseModal = () => {
+    dispatch(closeModal());
+  };
+
   return (
     <>
-      <Button onClick={onOpen}>Open Modal</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={authModal.open} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>
+            {authModal.view === "login" && "Login"}
+            {authModal.view === "signup" && "Sign Up"}
+            {authModal.view === "resetPassword" && "Reset Password"}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>Here is Modal Body</ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant='ghost'>Secondary Action</Button>
-          </ModalFooter>
+          <ModalBody
+            display='flex'
+            flexDirection={"column"}
+            alignItems='center'
+            justifyContent={"center"}>
+            <Flex
+              direction={"column"}
+              align={"center"}
+              justify={"center"}
+              width={"70%"}
+              border={"1px solid red"}>
+              <AuthInputs />
+              {/* <OAuthButtons />*/}
+              {/* ResetPassword */}
+            </Flex>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
