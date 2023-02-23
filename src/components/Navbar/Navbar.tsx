@@ -20,9 +20,9 @@ const Navbar: FC = ({}) => {
           alt='RedditText'
           display={{ base: "none", md: "unset" }}></Image>
       </Flex>
+      {/* <Directory/>*/}
       <SearchInput />
       <RightContent user={user} />
-      {/* <Directory/>*/}
     </Flex>
   );
 };

@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AuthModalState, closeModal } from "../../../store/authModalSlice";
 import AuthInputs from "./AuthInputs";
 import OAuthButtons from "./OAuthButtons";
+import ResetPassword from "./ResetPassword";
 
 const AuthModal: FC = ({}) => {
   const authModal = useSelector<RootState, AuthModalState>(
@@ -56,12 +57,17 @@ const AuthModal: FC = ({}) => {
               align={"center"}
               justify={"center"}
               width={"70%"}>
-              <OAuthButtons />
-              <Text color={"gray.400"} fontWeight={700}>
-                OR
-              </Text>
-              <AuthInputs />
-              {/* ResetPassword */}
+              {authModal.view === "login" || authModal.view === "signup" ? (
+                <>
+                  <OAuthButtons />
+                  <Text color={"gray.400"} fontWeight={700}>
+                    OR
+                  </Text>
+                  <AuthInputs />{" "}
+                </>
+              ) : (
+                <ResetPassword />
+              )}
             </Flex>
           </ModalBody>
         </ModalContent>
