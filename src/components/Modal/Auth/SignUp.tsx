@@ -3,6 +3,8 @@ import { RootState } from "@/store/store";
 import { Input, Button, Flex, Text } from "@chakra-ui/react";
 import React, { FC, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "../../../firebase/clientApp";
 
 const SignUp: FC = ({}) => {
   const authModal = useSelector<RootState, AuthModalState>(
@@ -14,6 +16,11 @@ const SignUp: FC = ({}) => {
     password: "",
     confirmPassword: "",
   });
+  const [error, setError] = useState("");
+
+  // FIREBASE HOOK
+  const [createUserWithEmailAndPassword, user, loading, userError] =
+    useCreateUserWithEmailAndPassword(auth);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Update from state
@@ -23,7 +30,14 @@ const SignUp: FC = ({}) => {
     }));
   };
 
-  const onSubmit = () => {};
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (error) setError("");
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      setError("passwords do not match");
+    }
+    createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
+  };
   return (
     <form onSubmit={onSubmit}>
       <Input
@@ -92,7 +106,18 @@ const SignUp: FC = ({}) => {
         }}
         bg='gray.50'
       />
-      <Button width={"100%"} height='36px' mt={2} mb={2} type='submit'>
+      {error && (
+        <Text textAlign={"center"} color='red' fontSize={"10pt"}>
+          {error}
+        </Text>
+      )}
+      <Button
+        width={"100%"}
+        height='36px'
+        mt={2}
+        mb={2}
+        type='submit'
+        isLoading={loading}>
         Sign Up
       </Button>
       <Flex fontSize={"9pt"} justifyContent='center'>
