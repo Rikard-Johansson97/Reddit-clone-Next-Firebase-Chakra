@@ -42,8 +42,7 @@ const AuthModal: FC = ({}) => {
               direction={"column"}
               align={"center"}
               justify={"center"}
-              width={"70%"}
-              border={"1px solid red"}>
+              width={"70%"}>
               <AuthInputs />
               {/* <OAuthButtons />*/}
               {/* ResetPassword */}

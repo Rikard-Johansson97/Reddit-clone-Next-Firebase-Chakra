@@ -1,12 +1,10 @@
 import { AuthModalState, setView } from "@/store/authModalSlice";
 import { RootState } from "@/store/store";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Input, Button, Flex, Text } from "@chakra-ui/react";
 import React, { FC, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-interface LoginProps {}
-
-const Login: FC<LoginProps> = ({}) => {
+const SignUp: FC = ({}) => {
   const authModal = useSelector<RootState, AuthModalState>(
     (state) => state.authModal
   );
@@ -89,5 +87,4 @@ const Login: FC<LoginProps> = ({}) => {
     </form>
   );
 };
-
-export default Login;
+export default SignUp;

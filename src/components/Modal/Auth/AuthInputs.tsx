@@ -4,6 +4,7 @@ import { Flex, Input, Button } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { useSelector } from "react-redux";
 import Login from "./Login";
+import SignUp from "./SignUp";
 
 interface AuthInputsProps {}
 
@@ -15,7 +16,7 @@ const AuthInputs: FC<AuthInputsProps> = ({}) => {
   return (
     <Flex direction='column' align='center' width='100%' mt={4}>
       {authModal.view === "login" && <Login />}
-      {/* authModal.view === "signup" && <SignUp />} */}
+      {authModal.view === "signup" && <SignUp />}
     </Flex>
   );
 };
