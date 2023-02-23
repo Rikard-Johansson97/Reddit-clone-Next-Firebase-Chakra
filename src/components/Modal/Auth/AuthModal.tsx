@@ -1,3 +1,4 @@
+import { auth } from "@/firebase/clientApp";
 import { RootState } from "@/store/store";
 import {
   Flex,
@@ -9,7 +10,8 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalState, closeModal } from "../../../store/authModalSlice";
 import AuthInputs from "./AuthInputs";
@@ -19,10 +21,18 @@ const AuthModal: FC = ({}) => {
   const authModal = useSelector<RootState, AuthModalState>(
     (state) => state.authModal
   );
+
+  const [user, loading, error] = useAuthState(auth);
+
   const dispatch = useDispatch();
   const handleCloseModal = () => {
     dispatch(closeModal());
   };
+
+  useEffect(() => {
+    if (user) handleCloseModal();
+    console.log("User", user);
+  }, [user]);
 
   return (
     <>
