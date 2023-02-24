@@ -48,6 +48,7 @@ const ActionIcons: React.FC<ActionIconsProps> = () => {
       </Flex>
       <>
         <Flex
+          ml={1.5}
           mr={1.5}
           padding={1}
           cursor='pointer'

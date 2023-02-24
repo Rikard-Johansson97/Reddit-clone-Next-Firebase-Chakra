@@ -49,6 +49,20 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
                   color={"gray.300"}
                   as={FaRedditSquare}
                 />
+                <Box
+                  display={{ base: "none", lg: "flex" }}
+                  flexDirection='column'
+                  fontSize='8pt'
+                  alignItems='flex-start'
+                  mr={8}>
+                  <Text fontWeight={700}>
+                    {user?.displayName || user?.email?.split("@")[0]}
+                  </Text>
+                  <Flex alignItems='center'>
+                    <Icon as={IoSparkles} color='brand.100' mr={1} />
+                    <Text color='gray.400'>1 karma</Text>
+                  </Flex>
+                </Box>
               </>
             ) : (
               <Icon as={VscAccount} fontSize={24} color={"gray.400"} mr={1} />
