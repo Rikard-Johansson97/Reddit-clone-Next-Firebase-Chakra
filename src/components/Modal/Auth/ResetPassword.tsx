@@ -3,7 +3,7 @@ import { Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 import { BsDot, BsReddit } from "react-icons/bs";
 import { auth } from "../../../firebase/clientApp";
-import { AuthModalState, ModalView, setView } from "@/store/authModalSlice";
+import { AuthModalState, ModalView, setView } from "@/store/AuthModalSlice";
 import { RootState } from "@/store/store";
 import { useSelector, useDispatch } from "react-redux";
 

@@ -1,12 +1,7 @@
-import {
-  AuthModalState,
-  closeModal,
-  openModal,
-  setView,
-} from "@/store/authModalSlice";
+import { AuthModalState, openModal, setView } from "@/store/AuthModalSlice";
 import { RootState } from "@/store/store";
 import { Button } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const AuthButtons: FC = ({}) => {

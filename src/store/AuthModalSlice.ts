@@ -12,7 +12,7 @@ const initialState: AuthModalState = {
   view: "login",
 };
 
-const authModalSlice = createSlice({
+const AuthModalSlice = createSlice({
   name: "authModal",
   initialState,
   reducers: {
@@ -28,6 +28,6 @@ const authModalSlice = createSlice({
   },
 });
 
-export const { openModal, closeModal, setView } = authModalSlice.actions;
+export const { openModal, closeModal, setView } = AuthModalSlice.actions;
 
-export default authModalSlice.reducer;
+export default AuthModalSlice.reducer;

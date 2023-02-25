@@ -1,7 +1,7 @@
-import { AuthModalState } from "@/store/authModalSlice";
+import { AuthModalState } from "@/store/AuthModalSlice";
 import { RootState } from "@/store/store";
-import { Flex, Input, Button } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Flex } from "@chakra-ui/react";
+import { FC } from "react";
 import { useSelector } from "react-redux";
 import Login from "./Login";
 import SignUp from "./SignUp";

@@ -1,6 +1,6 @@
 import { auth } from "@/firebase/clientApp";
 import { FIREBASE_ERRORS } from "@/firebase/errors";
-import { AuthModalState, setView } from "@/store/authModalSlice";
+import { AuthModalState, setView } from "@/store/AuthModalSlice";
 import { RootState } from "@/store/store";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { FC, useState } from "react";

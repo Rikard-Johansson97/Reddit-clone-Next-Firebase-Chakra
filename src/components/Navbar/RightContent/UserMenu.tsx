@@ -1,3 +1,6 @@
+import { auth } from "@/firebase/clientApp";
+import { AuthModalState, openModal, setView } from "@/store/AuthModalSlice";
+import { RootState } from "@/store/store";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -11,16 +14,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { signOut, User } from "firebase/auth";
-import React, { FC } from "react";
-import { FaRedditSquare } from "react-icons/fa";
-import { VscAccount } from "react-icons/vsc";
-import { IoSparkles } from "react-icons/io5";
+import { FC } from "react";
 import { CgProfile } from "react-icons/cg";
-import { MdLogin, MdLogout } from "react-icons/md";
-import { auth } from "@/firebase/clientApp";
-import { AuthModalState, openModal, setView } from "@/store/authModalSlice";
-import { RootState } from "@/store/store";
-import { useSelector, useDispatch } from "react-redux";
+import { FaRedditSquare } from "react-icons/fa";
+import { IoSparkles } from "react-icons/io5";
+import { MdLogout } from "react-icons/md";
+import { VscAccount } from "react-icons/vsc";
+import { useDispatch, useSelector } from "react-redux";
 
 interface UserMenuProps {
   user?: User | null;

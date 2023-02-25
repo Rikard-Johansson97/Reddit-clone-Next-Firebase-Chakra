@@ -1,4 +1,4 @@
-import { AuthModalState } from "@/store/authModalSlice";
+import { AuthModalState } from "@/store/AuthModalSlice";
 import { RootState } from "@/store/store";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Flex, Icon, Menu, MenuButton, MenuList, Text } from "@chakra-ui/react";

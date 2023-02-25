@@ -13,7 +13,7 @@ import {
 import { FC, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthModalState, closeModal } from "../../../store/authModalSlice";
+import { AuthModalState, closeModal } from "../../../store/AuthModalSlice";
 import AuthInputs from "./AuthInputs";
 import OAuthButtons from "./OAuthButtons";
 import ResetPassword from "./ResetPassword";
