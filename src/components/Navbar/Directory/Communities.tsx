@@ -1,5 +1,5 @@
 import CreateCommunityModal from "@/components/Modal/Auth/CreateCommunity/CreateCommunityModal";
-import { Flex, Icon, MenuItem } from "@chakra-ui/react";
+import { Flex, Icon, MenuItem, Text } from "@chakra-ui/react";
 import React, { FC, useState } from "react";
 import { GrAdd } from "react-icons/gr";
 
@@ -19,6 +19,7 @@ const Communities: FC<CommunitiesProps> = ({}) => {
         }}>
         <Flex align={"center"}>
           <Icon as={GrAdd} fontSize={20} mr={2} />
+          <Text>Create Community</Text>
         </Flex>
       </MenuItem>
     </>
