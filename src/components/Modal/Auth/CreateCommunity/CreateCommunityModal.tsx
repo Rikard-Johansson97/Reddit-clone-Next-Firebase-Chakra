@@ -17,11 +17,18 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
-import { firestore } from "../../../../firebase/clientApp";
+import { auth, firestore } from "../../../../firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -34,10 +41,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 }) => {
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
+  const [user] = useAuthState(auth);
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -54,6 +61,30 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         "Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
       );
     }
+
+    setLoading(true);
+
+    try {
+      const communityDocRef = doc(firestore, "communities", name);
+
+      // CHECK if the community exists
+      const communityDoc = await getDoc(communityDocRef);
+      if (communityDoc.exists()) {
+        throw new Error(`Sorry, /r ${name} is taken. Try another.`);
+      }
+
+      await setDoc(communityDocRef, {
+        creatorId: user?.uid,
+        createdAt: serverTimestamp(),
+        numberOfMembers: 1,
+        privacyType: communityType,
+      });
+    } catch (error: any) {
+      console.error("HandleCreateCommunity error ", error);
+      setNameError(error.message);
+    }
+
+    setLoading(false);
   };
 
   const onCommunityTypeChange = (
