@@ -1,5 +1,9 @@
 import { auth } from "@/firebase/clientApp";
 import { AuthModalState, openModal, setView } from "@/store/AuthModalSlice";
+import {
+  resetCommunityState,
+  updateCommunityState,
+} from "@/store/communitiesSlice";
 import { RootState } from "@/store/store";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
@@ -31,6 +35,11 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
     (state) => state.authModal
   );
   const dispatch = useDispatch();
+
+  const logout = async () => {
+    await signOut(auth);
+    dispatch(resetCommunityState());
+  };
 
   return (
     <Menu>
@@ -88,9 +97,7 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
               fontSize={"10pt"}
               fontWeight={700}
               _hover={{ bg: "blue.500", color: "white" }}
-              onClick={() => {
-                signOut(auth);
-              }}>
+              onClick={logout}>
               <Flex align={"center"}>
                 <Icon as={MdLogout} fontSize={20} mr={2} />
                 Log Out
