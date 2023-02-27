@@ -6,10 +6,18 @@ import {
   CommunityState,
   updateMySnippets,
 } from "@/store/communitiesSlice";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  increment,
+  writeBatch,
+} from "firebase/firestore";
+import { leaveCommunityReducer } from "@/store/communitiesSlice";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
+import { openModal, setView } from "@/store/AuthModalSlice";
 
 const useCommunityData = () => {
   const [user] = useAuthState(auth);
@@ -18,7 +26,6 @@ const useCommunityData = () => {
   );
 
   const temp = useSelector((state: any) => state);
-  console.log(temp);
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -34,8 +41,14 @@ const useCommunityData = () => {
     communityData: Community,
     isJoined: boolean
   ) => {
+    if (!user) {
+      dispatch(openModal());
+      dispatch(setView("login"));
+      return;
+    }
+
     if (isJoined) {
-      leaveCommunity();
+      leaveCommunity(communityData.id);
       return;
     }
     joinCommunity(communityData);
@@ -60,8 +73,59 @@ const useCommunityData = () => {
     }
     setLoading(false);
   };
-  const joinCommunity = (communityData: Community) => {};
-  const leaveCommunity = () => {};
+  const joinCommunity = async (communityData: Community) => {
+    setLoading(true);
+    try {
+      const batch = writeBatch(firestore);
+      const newSnippet: CommunitySnippet = {
+        communityId: communityData.id,
+        imageURL: communityData.imageURL || "",
+      };
+
+      batch.set(
+        doc(
+          firestore,
+          `users/${user?.uid}/communitySnippets/${communityData.id}`
+        ),
+        newSnippet
+      );
+
+      batch.update(doc(firestore, "communities", communityData.id), {
+        numberOfMembers: increment(1),
+      });
+
+      await batch.commit();
+
+      dispatch(updateMySnippets([newSnippet]));
+    } catch (error: any) {
+      console.log("Join Community Error: ", error);
+      setError(error.message);
+    }
+    setLoading(false);
+  };
+
+  const leaveCommunity = async (communityId: string) => {
+    setLoading(true);
+    try {
+      const batch = writeBatch(firestore);
+      console.log(communityId);
+      batch.delete(
+        doc(firestore, `users/${user?.uid}/communitySnippets`, communityId)
+      );
+
+      batch.update(doc(firestore, "communities", communityId), {
+        numberOfMembers: increment(-1),
+      });
+
+      await batch.commit();
+
+      dispatch(leaveCommunityReducer(communityId as any));
+    } catch (error: any) {
+      console.log("Leave Community Error: ", error);
+      setError(error.message);
+    }
+    setLoading(false);
+  };
 
   return {
     communityStateValue,

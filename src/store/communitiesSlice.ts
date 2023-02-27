@@ -1,3 +1,5 @@
+// communitySlice.ts
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Community {
@@ -6,42 +8,50 @@ export interface Community {
   numberOfMembers: number;
   privacyType: 'public' | 'restricted' | 'private';
   createdAt?: any;
-  imageUrl?: string;
+  imageURL?: string;
 }
 
 export interface CommunitySnippet {
   communityId: string;
-  isModerator: boolean;
-  imageUrl: string;
+  isModerator?: boolean;
+  imageURL?: string;
 }
 
 export interface CommunityState {
+  id: string;
   mySnippets: CommunitySnippet[];
+  currentCommunity: Community | null;
 }
 
-export const initialState: CommunityState = {
+const initialState: CommunityState = {
+  id: '',
   mySnippets: [],
+  currentCommunity: null,
 };
 
 const communitySlice = createSlice({
   name: 'community',
   initialState,
   reducers: {
-    // Define a reducer to update the entire community state
     updateCommunityState: (state, action: PayloadAction<CommunityState>) => {
       return action.payload;
     },
-    // Define a reducer to update the mySnippets field of the community state
     updateMySnippets: (state, action: PayloadAction<CommunitySnippet[]>) => {
       state.mySnippets = action.payload;
     },
-    // Define a reducer to reset the community state to the initial state
     resetCommunityState: (state) => {
       return initialState;
+    },
+    leaveCommunityReducer: (state, action: PayloadAction<string>) => {
+      state.mySnippets = state.mySnippets.filter(
+        (snippet) => snippet.communityId !== action.payload
+      );
+      state.currentCommunity = null;
     },
   },
 });
 
-export const { updateCommunityState, updateMySnippets, resetCommunityState } = communitySlice.actions;
+export const { updateCommunityState, updateMySnippets, resetCommunityState, leaveCommunityReducer } =
+  communitySlice.actions;
 
 export default communitySlice.reducer;
