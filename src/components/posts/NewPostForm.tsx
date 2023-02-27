@@ -32,7 +32,19 @@ const NewPostForm: FC<NewPostFormProps> = ({}) => {
   const [selectedFile, setSelectedFile] = useState<string>();
   const [loading, setLoading] = useState(false);
   const HandleCreatePost = async () => {};
-  const onSelectedImage = () => {};
+  const onSelectedImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader(); // good for file uploading
+
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedFile(readerEvent.target.result as string);
+      }
+    };
+  };
   const onTextChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -65,7 +77,14 @@ const NewPostForm: FC<NewPostFormProps> = ({}) => {
             loading={loading}
           />
         )}
-        {selectedTab === "images & videos" && <ImageUpload />}
+        {selectedTab === "images & videos" && (
+          <ImageUpload
+            selectedFile={selectedFile}
+            onSelectedImage={onSelectedImage}
+            setSelectedFile={setSelectedFile}
+            setSelectedTab={setSelectedTab}
+          />
+        )}
       </Flex>
     </Flex>
   );
