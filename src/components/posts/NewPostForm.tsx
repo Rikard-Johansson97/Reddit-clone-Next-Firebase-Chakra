@@ -7,8 +7,13 @@ import { icons } from "react-icons/lib";
 import TabItem from "./TabItem";
 import TextInputs from "./PostForm/TextInputs";
 import ImageUpload from "./PostForm/ImageUpload";
+import { Post } from "@/store/postSlice";
+import { User } from "firebase/auth";
+import { useRouter } from "next/router";
 
-interface NewPostFormProps {}
+interface NewPostFormProps {
+  user: User | null;
+}
 
 const formTabs: TabItemType[] = [
   { title: "post", icon: IoDocumentText },
@@ -23,7 +28,9 @@ export type TabItemType = {
   icon: typeof Icon.arguments;
 };
 
-const NewPostForm: FC<NewPostFormProps> = ({}) => {
+const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
+  const router = useRouter();
+
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [textInputs, setTextInputs] = useState({
     title: "",
@@ -31,7 +38,17 @@ const NewPostForm: FC<NewPostFormProps> = ({}) => {
   });
   const [selectedFile, setSelectedFile] = useState<string>();
   const [loading, setLoading] = useState(false);
-  const HandleCreatePost = async () => {};
+
+  const HandleCreatePost = async () => {
+    const { communityId } = router.query;
+
+    const newPost: Post = {
+      communityId,
+      creatorId: user?.uid,
+      creatorDisplayName: user?.email?.split("0")[0],
+    };
+  };
+
   const onSelectedImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader(); // good for file uploading
 
