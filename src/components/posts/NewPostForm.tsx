@@ -3,16 +3,24 @@ import React, { FC, useState } from "react";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { BiPoll } from "react-icons/bi";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
-import { icons } from "react-icons/lib";
 import TabItem from "./TabItem";
 import TextInputs from "./PostForm/TextInputs";
 import ImageUpload from "./PostForm/ImageUpload";
 import { Post } from "@/store/postSlice";
 import { User } from "firebase/auth";
 import { useRouter } from "next/router";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { firestore, storage } from "@/firebase/clientApp";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 interface NewPostFormProps {
-  user: User | null;
+  user: User;
 }
 
 const formTabs: TabItemType[] = [
@@ -31,6 +39,8 @@ export type TabItemType = {
 const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
   const router = useRouter();
 
+  console.log(router.query);
+
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [textInputs, setTextInputs] = useState({
     title: "",
@@ -43,10 +53,34 @@ const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
     const { communityId } = router.query;
 
     const newPost: Post = {
-      communityId,
+      communityId: communityId as string,
       creatorId: user?.uid,
-      creatorDisplayName: user?.email?.split("0")[0],
+      creatorDisplayName: user.email!.split("@")[0],
+      title: textInputs.title,
+      body: textInputs.body,
+      numberOfComments: 0,
+      voteStatus: 0,
+      createdAt: serverTimestamp() as Timestamp,
     };
+
+    setLoading(true);
+
+    try {
+      const postDocRef = await addDoc(collection(firestore, "posts"), newPost);
+
+      if (selectedFile) {
+        const imageRef = ref(storage, `posts/${postDocRef.id}/image`);
+        await uploadString(imageRef, selectedFile, "data_url");
+        const downloadURL = await getDownloadURL(imageRef);
+
+        await updateDoc(postDocRef, {
+          imageURL: downloadURL,
+        });
+      }
+    } catch (error: any) {
+      console.log("handleCreatePost error", error);
+    }
+    setLoading(false);
   };
 
   const onSelectedImage = (event: React.ChangeEvent<HTMLInputElement>) => {

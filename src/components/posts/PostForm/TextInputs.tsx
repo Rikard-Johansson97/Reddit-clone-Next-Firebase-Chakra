@@ -56,9 +56,7 @@ const TextInputs: FC<TextInputsProps> = ({
           padding='0px 30px'
           disabled={!textInputs.title}
           isLoading={loading}
-          onClick={() => {
-            handleCreatePost;
-          }}>
+          onClick={handleCreatePost}>
           Post
         </Button>
       </Flex>
