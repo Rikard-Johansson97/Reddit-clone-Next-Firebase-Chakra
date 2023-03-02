@@ -17,7 +17,7 @@ export interface Post {
   };
   imageURL?: string;
   postIdx?: number;
-  createdAt?: Timestamp;
+  createdAt: Timestamp;
   editedAt?: Timestamp;
   creatorDisplayName?: string;
 

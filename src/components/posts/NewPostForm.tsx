@@ -87,6 +87,8 @@ const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
         await updateDoc(postDocRef, {
           imageURL: downloadURL,
         });
+
+        router.back();
       }
     } catch (error: any) {
       console.log("handleCreatePost error", error);
