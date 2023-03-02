@@ -1,4 +1,14 @@
-import { Flex, Icon } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  CloseButton,
+  Flex,
+  Icon,
+  Text,
+} from "@chakra-ui/react";
 import React, { FC, useState } from "react";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { BiPoll } from "react-icons/bi";
@@ -48,6 +58,7 @@ const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
   });
   const [selectedFile, setSelectedFile] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const HandleCreatePost = async () => {
     const { communityId } = router.query;
@@ -79,6 +90,7 @@ const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
       }
     } catch (error: any) {
       console.log("handleCreatePost error", error);
+      setError(true);
     }
     setLoading(false);
   };
@@ -137,6 +149,12 @@ const NewPostForm: FC<NewPostFormProps> = ({ user }) => {
           />
         )}
       </Flex>
+      {error && (
+        <Alert status='error'>
+          <AlertIcon />
+          <Text mr={2}>Error creating post</Text>
+        </Alert>
+      )}
     </Flex>
   );
 };

@@ -1,34 +1,34 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Timestamp } from 'firebase/firestore';
 
-export type Post = {
-    id?: string;
-    communityId: string;
-    communityImageURL?: string;
-    userDisplayText?: string; // change to authorDisplayText
-    creatorId: string;
-    title: string;
-    body: string;
-    numberOfComments: number;
-    voteStatus: number;
-    currentUserVoteStatus?: {
-      id: string;
-      voteValue: number;
-    };
-    creatorDisplayName?: string;
-
-    imageURL?: string;
-    postIdx?: number;
-    createdAt?: Timestamp;
-    editedAt?: Timestamp;
-  };
-
-export type PostVote = {
-    id?: string;
-    postId: string;
-    communityId: string;
+export interface Post {
+  id?: string;
+  communityId: string;
+  communityImageURL?: string;
+  userDisplayText?: string; // change to authorDisplayText
+  creatorId: string;
+  title: string;
+  body: string;
+  numberOfComments: number;
+  voteStatus: number;
+  currentUserVoteStatus?: {
+    id: string;
     voteValue: number;
   };
+  imageURL?: string;
+  postIdx?: number;
+  createdAt?: Timestamp;
+  editedAt?: Timestamp;
+  creatorDisplayName?: string;
+
+}
+
+export interface PostVote {
+  id?: string;
+  postId: string;
+  communityId: string;
+  voteValue: number;
+}
 
 export interface PostState {
   selectedPost: Post | null;
@@ -52,33 +52,56 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    setSelectedPost: (state, action: PayloadAction<Post | null>) => {
-      state.selectedPost = action.payload;
-    },
     setPosts: (state, action: PayloadAction<Post[]>) => {
       state.posts = action.payload;
     },
-    setPostVotes: (state, action: PayloadAction<PostVote[]>) => {
-      state.postVotes = action.payload;
+    selectPost: (state, action: PayloadAction<Post | null>) => {
+      state.selectedPost = action.payload;
     },
-    setPostsCache: (
-      state,
-      action: PayloadAction<{ key: string; value: Post[] }>
-    ) => {
-      state.postsCache[action.payload.key] = action.payload.value;
+    addPost: (state, action: PayloadAction<Post>) => {
+      state.posts.push(action.payload);
+    },
+    updatePost: (state, action: PayloadAction<Post>) => {
+      const index = state.posts.findIndex(post => post.id === action.payload.id);
+      if (index !== -1) {
+        state.posts[index] = action.payload;
+      }
+    },
+    deletePost: (state, action: PayloadAction<string>) => {
+      state.posts = state.posts.filter(post => post.id !== action.payload);
+    },
+    addPostVote: (state, action: PayloadAction<PostVote>) => {
+      state.postVotes.push(action.payload);
+    },
+    updatePostVote: (state, action: PayloadAction<PostVote>) => {
+      const index = state.postVotes.findIndex(vote => vote.id === action.payload.id);
+      if (index !== -1) {
+        state.postVotes[index] = action.payload;
+      }
+    },
+    deletePostVote: (state, action: PayloadAction<string>) => {
+      state.postVotes = state.postVotes.filter(vote => vote.id !== action.payload);
+    },
+    setPostCache: (state, action: PayloadAction<{ key: string; posts: Post[] }>) => {
+      state.postsCache[action.payload.key] = action.payload.posts;
     },
     setPostUpdateRequired: (state, action: PayloadAction<boolean>) => {
       state.postUpdateRequired = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
-  setSelectedPost,
+  selectPost,
+  addPost,
+  updatePost,
+  deletePost,
+  addPostVote,
+  updatePostVote,
   setPosts,
-  setPostVotes,
-  setPostsCache,
-  setPostUpdateRequired,
+  deletePostVote,
+  setPostCache,
+  setPostUpdateRequired
 } = postSlice.actions;
 
 export default postSlice.reducer;
