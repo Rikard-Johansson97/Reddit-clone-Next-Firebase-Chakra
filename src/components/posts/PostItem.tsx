@@ -1,5 +1,15 @@
 import { Post, selectPost } from "@/store/postSlice";
-import { Flex, Icon, Image, Skeleton, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Flex,
+  Icon,
+  Image,
+  Skeleton,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import moment from "moment";
 import React, { FC, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -24,8 +34,8 @@ interface PostItemProps {
     vote: number,
     communityId: string
   ) => {};
-  onDeletePost: (post: Post, postIdx: number) => {};
-  onSelectPost: (post: Post, postIdx: number) => void;
+  onDeletePost: (post: Post) => Promise<boolean>;
+  onSelectPost: (post: Post) => void;
 }
 
 const PostItem: FC<PostItemProps> = ({
@@ -37,8 +47,24 @@ const PostItem: FC<PostItemProps> = ({
   onSelectPost,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    setLoadingDelete(true);
+    try {
+      const success = await onDeletePost(post);
+
+      if (!success) {
+        throw new Error("Failed to delete post");
+      }
+
+      console.log("Post deleted");
+    } catch (error: any) {
+      setError(error.message);
+    }
+    setLoadingDelete(false);
+  };
 
   return (
     <Flex
@@ -79,6 +105,12 @@ const PostItem: FC<PostItemProps> = ({
         />
       </Flex>
       <Flex direction={"column"} width='100%'>
+        {error && (
+          <Alert status='error'>
+            <AlertIcon />
+            <Text mr={2}>Error creating post</Text>
+          </Alert>
+        )}
         <Stack spacing={1} p='10px'>
           <Stack
             direction={"row"}
@@ -144,9 +176,15 @@ const PostItem: FC<PostItemProps> = ({
               borderRadius={4}
               _hover={{ bg: "gray.200" }}
               cursor='pointer'
-              onClick={() => onDeletePost}>
-              <Icon as={AiOutlineDelete} mr={2} />
-              <Text fontSize={"9pt"}>Delete</Text>
+              onClick={handleDelete}>
+              {loadingDelete ? (
+                <Spinner />
+              ) : (
+                <>
+                  <Icon as={AiOutlineDelete} mr={2} />
+                  <Text fontSize={"9pt"}>Delete</Text>
+                </>
+              )}
             </Flex>
           )}
         </Flex>

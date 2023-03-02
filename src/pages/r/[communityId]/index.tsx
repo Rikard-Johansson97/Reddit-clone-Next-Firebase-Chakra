@@ -1,13 +1,19 @@
+import About from "@/components/Community/About";
 import CreatePostLink from "@/components/Community/CreatePostLink";
 import Header from "@/components/Community/Header";
 import NotFound from "@/components/Community/NotFound";
 import PageContent from "@/components/Layout/PageContent";
 import Posts from "@/components/posts/Posts";
 import { firestore } from "@/firebase/clientApp";
-import { Community } from "@/store/communitiesSlice";
+import {
+  Community,
+  CommunityState,
+  updateCommunityState,
+} from "@/store/communitiesSlice";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import safeJsonStringify from "safe-json-stringify";
 
 interface CommunityPageProps {
@@ -16,10 +22,20 @@ interface CommunityPageProps {
 
 const CommunityPage: FC<CommunityPageProps> = ({ communityData }) => {
   console.log("Community data", communityData);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(
+      updateCommunityState({
+        currentCommunity: communityData,
+      } as CommunityState)
+    );
+  }, []);
 
   if (!communityData) {
     return <NotFound />;
   }
+
   return (
     <>
       <Header communityData={communityData} />
@@ -29,7 +45,7 @@ const CommunityPage: FC<CommunityPageProps> = ({ communityData }) => {
           <Posts communityData={communityData} />
         </>
         <>
-          <div>RHS</div>
+          <About communityData={communityData} />
         </>
       </PageContent>
     </>

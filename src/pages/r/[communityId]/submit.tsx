@@ -1,12 +1,18 @@
 import PageContent from "@/components/Layout/PageContent";
 import NewPostForm from "@/components/posts/NewPostForm";
 import { auth } from "@/firebase/clientApp";
+import { CommunityState } from "@/store/communitiesSlice";
+import { RootState } from "@/store/store";
 import { Box, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useSelector } from "react-redux";
 
 const SubmitPostPage = ({}) => {
   const [user, loading, error] = useAuthState(auth);
+  const communityStateValue = useSelector<RootState, CommunityState>(
+    (state) => state.community
+  );
+
   return (
     <PageContent>
       <>

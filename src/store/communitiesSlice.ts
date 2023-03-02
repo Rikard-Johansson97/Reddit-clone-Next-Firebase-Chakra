@@ -20,7 +20,7 @@ export interface CommunitySnippet {
 export interface CommunityState {
   id: string;
   mySnippets: CommunitySnippet[];
-  currentCommunity: Community | null;
+  currentCommunity?: Community | null;
 }
 
 const initialState: CommunityState = {

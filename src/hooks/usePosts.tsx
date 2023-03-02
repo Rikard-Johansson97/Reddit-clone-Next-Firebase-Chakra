@@ -1,7 +1,15 @@
-import { auth } from "@/firebase/clientApp";
+import { auth, firestore, storage } from "@/firebase/clientApp";
 import { Community } from "@/store/communitiesSlice";
-import { Post, PostState, setPosts, updatePost } from "@/store/postSlice";
+import {
+  deletePost,
+  Post,
+  PostState,
+  setPosts,
+  updatePost,
+} from "@/store/postSlice";
 import { RootState } from "@/store/store";
+import { deleteDoc, doc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,7 +23,7 @@ const usePosts = (communityData?: Community) => {
 
   console.log(postsStateValue);
 
-  const onSelectPost = (post: Post, postIdx: number) => {};
+  const onSelectPost = (post: Post) => {};
 
   const onVote = async (
     event: React.MouseEvent<SVGElement, MouseEvent>,
@@ -25,7 +33,20 @@ const usePosts = (communityData?: Community) => {
   ) => {};
 
   const onDeletePost = async (post: Post): Promise<boolean> => {
-    return true;
+    try {
+      if (post.imageURL) {
+        const imageRef = ref(storage, `posts/${post.id}/image`);
+        await deleteObject(imageRef);
+      }
+
+      const postDocRef = doc(firestore, "posts", post.id!);
+      await deleteDoc(postDocRef);
+
+      dispatch(deletePost(post.id as string));
+      return true;
+    } catch (error: any) {
+      return false;
+    }
   };
 
   const setPostStateValue = (posts: Post[]) => {
