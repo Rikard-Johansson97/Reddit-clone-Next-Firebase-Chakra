@@ -1,12 +1,12 @@
 // communitySlice.ts
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Community {
   id: string;
   creatorId: string;
   numberOfMembers: number;
-  privacyType: 'public' | 'restricted' | 'private';
+  privacyType: "public" | "restricted" | "private";
   createdAt?: any;
   imageURL?: string;
 }
@@ -24,13 +24,13 @@ export interface CommunityState {
 }
 
 const initialState: CommunityState = {
-  id: '',
+  id: "",
   mySnippets: [],
   currentCommunity: null,
 };
 
 const communitySlice = createSlice({
-  name: 'community',
+  name: "community",
   initialState,
   reducers: {
     updateCommunityState: (state, action: PayloadAction<CommunityState>) => {
@@ -48,10 +48,20 @@ const communitySlice = createSlice({
       );
       state.currentCommunity = null;
     },
+    updateCommunityImage: (state, action: PayloadAction<string>) => {
+      if (state.currentCommunity) {
+        state.currentCommunity.imageURL = action.payload;
+      }
+    },
   },
 });
 
-export const { updateCommunityState, updateMySnippets, resetCommunityState, leaveCommunityReducer } =
-  communitySlice.actions;
+export const {
+  updateCommunityState,
+  updateMySnippets,
+  resetCommunityState,
+  leaveCommunityReducer,
+  updateCommunityImage,
+} = communitySlice.actions;
 
 export default communitySlice.reducer;
