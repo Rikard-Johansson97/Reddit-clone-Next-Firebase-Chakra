@@ -1,9 +1,6 @@
 import { auth } from "@/firebase/clientApp";
 import { AuthModalState, openModal, setView } from "@/store/AuthModalSlice";
-import {
-  resetCommunityState,
-  updateCommunityState,
-} from "@/store/communitiesSlice";
+import { updateCommunityState } from "@/store/communitiesSlice";
 import { RootState } from "@/store/store";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {

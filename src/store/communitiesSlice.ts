@@ -39,9 +39,6 @@ const communitySlice = createSlice({
     updateMySnippets: (state, action: PayloadAction<CommunitySnippet[]>) => {
       state.mySnippets = action.payload;
     },
-    resetCommunityState: (state) => {
-      return initialState;
-    },
     leaveCommunityReducer: (state, action: PayloadAction<string>) => {
       state.mySnippets = state.mySnippets.filter(
         (snippet) => snippet.communityId !== action.payload
@@ -62,7 +59,6 @@ const communitySlice = createSlice({
 export const {
   updateCommunityState,
   updateMySnippets,
-  resetCommunityState,
   leaveCommunityReducer,
   updateCommunityImage,
   setCurrentCommunity,

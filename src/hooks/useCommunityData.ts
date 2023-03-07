@@ -13,6 +13,7 @@ import {
   getDoc,
   getDocs,
   increment,
+  query,
   writeBatch,
 } from "firebase/firestore";
 import { leaveCommunityReducer } from "@/store/communitiesSlice";
@@ -36,6 +37,12 @@ const useCommunityData = () => {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  useEffect(() => {
+    if (!user || !!communityStateValue?.mySnippets?.length) return;
+
+    getSnippets();
+  }, [user]);
+
   const onJoinOrLeaveCommunity = (
     communityData: Community,
     isJoined: boolean
@@ -53,7 +60,7 @@ const useCommunityData = () => {
     joinCommunity(communityData);
   };
 
-  const getMySnippets = async () => {
+  const getSnippets = async () => {
     setLoading(true);
     try {
       const snippetDocs = await getDocs(
@@ -63,15 +70,15 @@ const useCommunityData = () => {
       const snippets = snippetDocs.docs.map((doc) => ({
         ...doc.data(),
       }));
-      dispatch(updateMySnippets(snippets as CommunitySnippet[]));
 
-      setLoading(false);
+      dispatch(updateMySnippets(snippets as CommunitySnippet[]));
     } catch (error: any) {
       console.log("getMySnippets Error: ", error);
       setError(error.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
+
   const joinCommunity = async (communityData: Community) => {
     setLoading(true);
     try {
@@ -79,6 +86,7 @@ const useCommunityData = () => {
       const newSnippet: CommunitySnippet = {
         communityId: communityData.id,
         imageURL: communityData.imageURL || "",
+        isModerator: user?.uid === communityData.creatorId,
       };
 
       batch.set(
@@ -141,15 +149,6 @@ const useCommunityData = () => {
       console.log("getCommunityData Error: ", error);
     }
   };
-
-  useEffect(() => {
-    if (!user) {
-      dispatch(updateMySnippets([]));
-      return;
-    }
-
-    getMySnippets();
-  }, [user]);
 
   useEffect(() => {
     const { communityId } = router.query;
