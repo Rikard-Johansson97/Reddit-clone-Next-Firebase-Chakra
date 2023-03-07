@@ -48,6 +48,9 @@ const communitySlice = createSlice({
       );
       state.currentCommunity = null;
     },
+    setCurrentCommunity: (state, action: PayloadAction<Community>) => {
+      state.currentCommunity = action.payload;
+    },
     updateCommunityImage: (state, action: PayloadAction<string>) => {
       if (state.currentCommunity) {
         state.currentCommunity.imageURL = action.payload;
@@ -62,6 +65,7 @@ export const {
   resetCommunityState,
   leaveCommunityReducer,
   updateCommunityImage,
+  setCurrentCommunity,
 } = communitySlice.actions;
 
 export default communitySlice.reducer;

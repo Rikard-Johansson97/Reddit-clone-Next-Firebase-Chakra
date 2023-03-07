@@ -6,26 +6,39 @@ import {
   Post,
   PostState,
   PostVote,
+  selectPost,
   setPosts,
   votePost,
 } from "@/store/postSlice";
 import { RootState } from "@/store/store";
 import { collection, deleteDoc, doc, writeBatch } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 
 const usePosts = (communityData?: Community) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const postsStateValue = useSelector<RootState, PostState>(
     (state) => state.postSlice
   );
   const [user] = useAuthState(auth);
 
-  const onSelectPost = (post: Post) => {};
+  const onSelectPost = (post: Post) => {
+    dispatch(selectPost(post));
+    router.push(`/r/${post.communityId}/comments/${post.id}`);
+  };
 
-  const onVote = async (post: Post, vote: number, communityId: string) => {
+  const onVote = async (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: Post,
+    vote: number,
+    communityId: string
+  ) => {
+    event.stopPropagation();
+
     if (!user?.uid) {
       dispatch(setView("login")), dispatch(openModal());
       return;
@@ -122,6 +135,10 @@ const usePosts = (communityData?: Community) => {
       // Update the state with the updated posts and post votes
       dispatch(setPosts(updatedPosts));
       dispatch(votePost(updatedPostVotes));
+
+      if (postsStateValue.selectedPost) {
+        dispatch(selectPost(updatedPost));
+      }
 
       await batch.commit();
     } catch (error) {

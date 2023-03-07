@@ -1,17 +1,14 @@
+import About from "@/components/Community/About";
 import PageContent from "@/components/Layout/PageContent";
 import NewPostForm from "@/components/posts/NewPostForm";
 import { auth } from "@/firebase/clientApp";
-import { CommunityState } from "@/store/communitiesSlice";
-import { RootState } from "@/store/store";
+import useCommunityData from "@/hooks/useCommunityData";
 import { Box, Text } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useSelector } from "react-redux";
 
 const SubmitPostPage = ({}) => {
   const [user, loading, error] = useAuthState(auth);
-  const communityStateValue = useSelector<RootState, CommunityState>(
-    (state) => state.community
-  );
+  const { communityStateValue } = useCommunityData();
 
   return (
     <PageContent>
@@ -21,7 +18,11 @@ const SubmitPostPage = ({}) => {
         </Box>
         {user && <NewPostForm user={user} />}
       </>
-      <></>
+      <>
+        {communityStateValue.currentCommunity && (
+          <About communityData={communityStateValue.currentCommunity} />
+        )}
+      </>
     </PageContent>
   );
 };

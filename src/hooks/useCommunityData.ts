@@ -4,11 +4,13 @@ import {
   Community,
   CommunitySnippet,
   CommunityState,
+  setCurrentCommunity,
   updateMySnippets,
 } from "@/store/communitiesSlice";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   increment,
   writeBatch,
@@ -18,6 +20,8 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal, setView } from "@/store/AuthModalSlice";
+import { useRouter } from "next/router";
+import { selectPost } from "@/store/postSlice";
 
 const useCommunityData = () => {
   const [user] = useAuthState(auth);
@@ -30,6 +34,7 @@ const useCommunityData = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const onJoinOrLeaveCommunity = (
     communityData: Community,
@@ -121,6 +126,22 @@ const useCommunityData = () => {
     setLoading(false);
   };
 
+  const getCommunityData = async (communityId: string) => {
+    try {
+      const communityDocRef = doc(firestore, "communities", communityId);
+      const communityDoc = await getDoc(communityDocRef);
+
+      dispatch(
+        setCurrentCommunity({
+          id: communityDoc.id,
+          ...communityDoc.data(),
+        } as Community)
+      );
+    } catch (error) {
+      console.log("getCommunityData Error: ", error);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       dispatch(updateMySnippets([]));
@@ -129,6 +150,14 @@ const useCommunityData = () => {
 
     getMySnippets();
   }, [user]);
+
+  useEffect(() => {
+    const { communityId } = router.query;
+
+    if (communityId && !communityStateValue.currentCommunity) {
+      getCommunityData(communityId as string);
+    }
+  }, [router.query, communityStateValue.currentCommunity]);
 
   return {
     communityStateValue,
