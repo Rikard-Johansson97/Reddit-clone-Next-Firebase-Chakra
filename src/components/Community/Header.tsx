@@ -16,15 +16,22 @@ const Header: FC<HeaderProps> = ({ communityData }) => {
     (item) => item.communityId === communityData.id
   );
 
-  console.log(isJoined);
-
   return (
     <Flex direction={"column"} width='100%' height='146px'>
       <Box height='50%' bg='blue.400'></Box>
       <Flex justify={"center"} bg='white' flexGrow={1}>
         <Flex width={"95%"} maxWidth='860px'>
-          {communityData.imageURL ? (
-            <Image />
+          {communityStateValue.currentCommunity?.imageURL ? (
+            <Image
+              src={communityStateValue.currentCommunity?.imageURL}
+              alt='Community image'
+              borderRadius={"full"}
+              boxSize='66px'
+              position={"relative"}
+              top={-3}
+              color='blue.500'
+              border='4px solid white'
+            />
           ) : (
             <Icon
               as={FaReddit}

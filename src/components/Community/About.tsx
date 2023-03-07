@@ -30,7 +30,6 @@ interface AboutProps {
 }
 
 const About: FC<AboutProps> = ({ communityData }) => {
-  const router = useRouter();
   const [user] = useAuthState(auth);
   const selectedFileRef = useRef<HTMLInputElement>(null);
   const { selectedFile, setSelectedFile, onSelectedImage } = useSelectFile();
@@ -39,8 +38,9 @@ const About: FC<AboutProps> = ({ communityData }) => {
 
   const onUpdateImage = async () => {
     if (!selectedFile) return;
+    setUploadingImage(true);
     try {
-      const imageRef = ref(storage, `communities/${communityData.id}/images`);
+      const imageRef = ref(storage, `communities/${communityData.id}/image`);
 
       await uploadString(imageRef, selectedFile, "data_url");
 
@@ -53,6 +53,7 @@ const About: FC<AboutProps> = ({ communityData }) => {
     } catch (error: any) {
       console.log("onUpdateImage error", error);
     }
+    setUploadingImage(false);
   };
 
   return (
@@ -102,7 +103,7 @@ const About: FC<AboutProps> = ({ communityData }) => {
               </Text>
             )}
           </Flex>
-          <Link href={`/r/${router.query.communityId}/submit`}>
+          <Link href={`/r/${communityData.id}/submit`}>
             <Button width={"100%"} h='30px'>
               Create Post
             </Button>
@@ -138,7 +139,7 @@ const About: FC<AboutProps> = ({ communityData }) => {
                 {selectedFile && uploadingImage ? (
                   <Spinner />
                 ) : (
-                  <Text cursor={"pointer"} onClick={() => onUpdateImage}>
+                  <Text cursor={"pointer"} onClick={onUpdateImage}>
                     Save Changes
                   </Text>
                 )}
@@ -148,7 +149,7 @@ const About: FC<AboutProps> = ({ communityData }) => {
                   accept='image/x-png,image/gif,image/jpeg'
                   hidden
                   ref={selectedFileRef}
-                  onChange={() => onSelectedImage}
+                  onChange={onSelectedImage}
                 />
               </Stack>
             </>

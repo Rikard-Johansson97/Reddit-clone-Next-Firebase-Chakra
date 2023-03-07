@@ -31,12 +31,6 @@ const useCommunityData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!user) return;
-
-    getMySnippets();
-  }, [user]);
-
   const onJoinOrLeaveCommunity = (
     communityData: Community,
     isJoined: boolean
@@ -126,6 +120,15 @@ const useCommunityData = () => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(updateMySnippets([]));
+      return;
+    }
+
+    getMySnippets();
+  }, [user]);
 
   return {
     communityStateValue,

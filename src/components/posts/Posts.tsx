@@ -1,11 +1,13 @@
 import { auth, firestore } from "@/firebase/clientApp";
+import useCommunityData from "@/hooks/useCommunityData";
 import usePosts from "@/hooks/usePosts";
 import { Community } from "@/store/communitiesSlice";
-import { Post } from "@/store/postSlice";
+import { Post, PostVote, votePost } from "@/store/postSlice";
 import { Stack } from "@chakra-ui/react";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { FC, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useDispatch } from "react-redux";
 import PostItem from "./PostItem";
 import PostLoader from "./PostLoader";
 
@@ -24,14 +26,16 @@ const Posts: FC<PostsProps> = ({ communityData, userId }) => {
     onDeletePost,
     onVote,
     error,
-  } = usePosts(communityData);
+  } = usePosts(communityData!);
+  const dispatch = useDispatch();
+  const { communityStateValue, onJoinOrLeaveCommunity } = useCommunityData();
 
   const getPosts = async () => {
     try {
       setLoading(true);
       const postQuery = query(
         collection(firestore, "posts"),
-        where("communityId", "==", communityData.id),
+        where("communityId", "==", communityData.id!),
         orderBy("createdAt", "desc")
       );
 
@@ -56,6 +60,31 @@ const Posts: FC<PostsProps> = ({ communityData, userId }) => {
     getPosts();
   }, []);
 
+  const getCommunityPostVote = async (communityId: string) => {
+    const postVotesQuery = query(
+      collection(firestore, "users", `${user?.uid}/postVotes`),
+      where("communityId", "==", communityId)
+    );
+
+    const postVoteDocs = await getDocs(postVotesQuery);
+    const postVotes = postVoteDocs.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    dispatch(votePost(postVotes as PostVote[]));
+  };
+
+  useEffect(() => {
+    if (!user || !communityStateValue?.currentCommunity?.id) return;
+    getCommunityPostVote(communityStateValue?.currentCommunity?.id as string);
+  }, [user, communityStateValue?.currentCommunity]);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(votePost([]));
+    }
+  }, [user]);
+
   return (
     <>
       {loading ? (
@@ -64,10 +93,14 @@ const Posts: FC<PostsProps> = ({ communityData, userId }) => {
         <Stack>
           {postsStateValue.posts.map((post, i) => (
             <PostItem
-              key={i}
+              key={post.id}
               post={post}
               userISCreator={user?.uid === post.creatorId}
-              userVoteValue={undefined}
+              userVoteValue={
+                postsStateValue.postVotes.find(
+                  (vote) => vote.postId === post.id
+                )?.voteValue
+              }
               onVote={onVote}
               onSelectPost={onSelectPost}
               onDeletePost={onDeletePost}
