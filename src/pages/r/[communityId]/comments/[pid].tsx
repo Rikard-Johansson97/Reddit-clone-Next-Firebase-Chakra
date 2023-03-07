@@ -1,10 +1,12 @@
 import About from "@/components/Community/About";
 import PageContent from "@/components/Layout/PageContent";
+import Comments from "@/components/posts/comments/Comments";
 import PostItem from "@/components/posts/PostItem";
 import { auth, firestore } from "@/firebase/clientApp";
 import useCommunityData from "@/hooks/useCommunityData";
 import usePosts from "@/hooks/usePosts";
 import { Post, selectPost } from "@/store/postSlice";
+import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { FC, useEffect } from "react";
@@ -56,6 +58,11 @@ const PostPage: FC<PostPageProps> = ({}) => {
             }
           />
         )}
+        <Comments
+          user={user as User}
+          selectedPost={postsStateValue.selectedPost}
+          communityId={postsStateValue.selectedPost?.communityId as string}
+        />
       </>
       <>
         {communityStateValue.currentCommunity && (

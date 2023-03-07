@@ -84,6 +84,16 @@ const postSlice = createSlice({
     setPostUpdateRequired: (state, action: PayloadAction<boolean>) => {
       state.postUpdateRequired = action.payload;
     },
+    incrementComments: (state, action: PayloadAction<string>) => {
+      if (state.selectedPost) {
+        state.selectedPost.numberOfComments++;
+      }
+    },
+    decrementComments: (state, action: PayloadAction<string>) => {
+      if (state.selectedPost && state.selectedPost.numberOfComments > 0) {
+        state.selectedPost.numberOfComments--;
+      }
+    },
   },
 });
 
@@ -96,6 +106,8 @@ export const {
   setPosts,
   setPostCache,
   setPostUpdateRequired,
+  incrementComments,
+  decrementComments,
 } = postSlice.actions;
 
 export default postSlice.reducer;
