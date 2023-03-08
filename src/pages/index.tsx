@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import CreatePostLink from "@/components/Community/CreatePostLink";
+import PersonalHome from "@/components/Community/PersonalHome";
+import Premium from "@/components/Community/Premuim";
 import Recommendations from "@/components/Community/Recommendations";
 import PageContent from "@/components/Layout/PageContent";
 import PostItem from "@/components/posts/PostItem";
@@ -156,9 +158,11 @@ export default function Home() {
             </Stack>
           )}
         </>
-        <>
+        <Stack spacing={5}>
           <Recommendations />
-        </>
+          <Premium />
+          <PersonalHome />
+        </Stack>
       </PageContent>
     </>
   );

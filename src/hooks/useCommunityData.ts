@@ -122,7 +122,7 @@ const useCommunityData = () => {
     setLoading(true);
     try {
       const batch = writeBatch(firestore);
-      console.log(communityId);
+
       batch.delete(
         doc(firestore, `users/${user?.uid}/communitySnippets`, communityId)
       );
