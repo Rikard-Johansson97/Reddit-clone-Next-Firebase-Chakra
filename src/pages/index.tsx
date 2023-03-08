@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import CreatePostLink from "@/components/Community/CreatePostLink";
+import Recommendations from "@/components/Community/Recommendations";
 import PageContent from "@/components/Layout/PageContent";
 import PostItem from "@/components/posts/PostItem";
 import PostLoader from "@/components/posts/PostLoader";
@@ -7,7 +8,7 @@ import { auth, firestore } from "@/firebase/clientApp";
 import useCommunityData from "@/hooks/useCommunityData";
 import usePosts from "@/hooks/usePosts";
 import { CommunitySnippet, CommunityState } from "@/store/communitiesSlice";
-import { Post, setPosts } from "@/store/postSlice";
+import { Post, PostVote, setPosts, votePost } from "@/store/postSlice";
 import { RootState } from "@/store/store";
 import { Stack } from "@chakra-ui/react";
 import {
@@ -85,7 +86,25 @@ export default function Home() {
     setLoading(false);
   };
 
-  const getUserPostVotes = () => {};
+  const getUserPostVotes = async () => {
+    try {
+      const postIds = postsStateValue.posts.map((post) => post.id);
+      const postVoteQuery = query(
+        collection(firestore, `users/${user?.uid}/postVotes`),
+        where("postId", "in", postIds)
+      );
+
+      const postVoteDocs = await getDocs(postVoteQuery);
+      const postVotes = postVoteDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      dispatch(votePost(postVotes as PostVote[]));
+    } catch (error) {
+      console.log("getUserPostVotes", error);
+    }
+  };
 
   useEffect(() => {
     if (!user && !loadingUser) buildNoUserHomeFeed();
@@ -94,6 +113,14 @@ export default function Home() {
   useEffect(() => {
     if (communityStateValue.snippetsFetched) buildUserHomeFeed();
   }, [communityStateValue.snippetsFetched]);
+
+  useEffect(() => {
+    if (user && postsStateValue.posts.length) getUserPostVotes();
+
+    return () => {
+      dispatch(votePost([] as PostVote[]));
+    };
+  }, [user, postsStateValue.posts]);
 
   return (
     <>
@@ -129,7 +156,9 @@ export default function Home() {
             </Stack>
           )}
         </>
-        <>{/*  */}</>
+        <>
+          <Recommendations />
+        </>
       </PageContent>
     </>
   );
