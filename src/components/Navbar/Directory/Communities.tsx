@@ -14,8 +14,9 @@ interface CommunitiesProps {}
 
 const Communities: FC<CommunitiesProps> = ({}) => {
   const [open, setOpen] = useState(false);
-
-  const { communityStateValue } = useCommunityData();
+  const mySnippets = useSelector<RootState, CommunitySnippet[]>(
+    (state) => state.community.mySnippets
+  );
 
   return (
     <>
@@ -23,7 +24,7 @@ const Communities: FC<CommunitiesProps> = ({}) => {
         <Text pl={3} mb={1} fontSize='7pt' fontWeight={500} color='gray.500'>
           MODERATING
         </Text>
-        {communityStateValue.mySnippets
+        {mySnippets
           ?.filter((snippet) => snippet.isModerator)
           .map((snippet: CommunitySnippet) => (
             <MenuListItem
@@ -53,7 +54,7 @@ const Communities: FC<CommunitiesProps> = ({}) => {
             <Text>Create Community</Text>
           </Flex>
         </MenuItem>
-        {communityStateValue.mySnippets?.map((snippet: CommunitySnippet) => (
+        {mySnippets?.map((snippet: CommunitySnippet) => (
           <MenuListItem
             displayText={`r/${snippet.communityId}`}
             icon={FaReddit}

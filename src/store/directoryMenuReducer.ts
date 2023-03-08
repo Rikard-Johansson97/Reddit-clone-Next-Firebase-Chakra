@@ -10,12 +10,12 @@ export type DirectoryMenuItem = {
   imageURL?: string;
 };
 
-interface DirectoryMenuState {
+export interface DirectoryMenuState {
   isOpen: boolean;
   selectedMenuItem: DirectoryMenuItem;
 }
 
-const initialState: DirectoryMenuState = {
+export const initialState: DirectoryMenuState = {
   isOpen: false,
   selectedMenuItem: {
     displayText: "Home",
@@ -23,6 +23,13 @@ const initialState: DirectoryMenuState = {
     icon: TiHome,
     iconColor: "black",
   },
+};
+
+export const defaultMenuItem: DirectoryMenuItem = {
+  displayText: "Home",
+  link: "/",
+  icon: TiHome,
+  iconColor: "black",
 };
 
 const directoryMenuSlice = createSlice({

@@ -56,10 +56,6 @@ const Posts: FC<PostsProps> = ({ communityData, userId }) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    getPosts();
-  }, []);
-
   const getCommunityPostVote = async (communityId: string) => {
     const postVotesQuery = query(
       collection(firestore, "users", `${user?.uid}/postVotes`),
@@ -73,6 +69,10 @@ const Posts: FC<PostsProps> = ({ communityData, userId }) => {
     }));
     dispatch(votePost(postVotes as PostVote[]));
   };
+
+  useEffect(() => {
+    getPosts();
+  }, [communityData]);
 
   useEffect(() => {
     if (!user || !communityStateValue?.currentCommunity?.id) return;

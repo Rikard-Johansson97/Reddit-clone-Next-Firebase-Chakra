@@ -7,20 +7,29 @@ import { BsLink45Deg } from "react-icons/bs";
 import { FaReddit } from "react-icons/fa";
 import { IoImageOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
-import { openModal } from "@/store/AuthModalSlice";
+import { openModal, setView } from "@/store/AuthModalSlice";
+import useDirectory from "@/hooks/useDirectory";
 
 const CreatePostLink = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const dispatch = useDispatch();
+  const { ToggleMenuOpen } = useDirectory();
 
   const onClick = () => {
-    // Could check for user to open auth modal before redirecting to submit
+    if (!user) {
+      dispatch(openModal());
+      dispatch(setView("login"));
+      return;
+    }
     const { communityId } = router.query;
+
     if (communityId) {
       router.push(`/r/${router.query.communityId}/submit`);
       return;
     }
+
+    ToggleMenuOpen();
   };
 
   return (

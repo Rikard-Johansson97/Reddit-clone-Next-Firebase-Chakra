@@ -1,6 +1,8 @@
+import useCommunityData from "@/hooks/useCommunityData";
 import Head from "next/head";
 
 export default function Home() {
+  const { communityStateValue } = useCommunityData();
   return (
     <>
       <Head>

@@ -1,18 +1,22 @@
-import { Community } from "@/store/communitiesSlice";
+import { Community, CommunityState } from "@/store/communitiesSlice";
 import { Box, Button, Flex, Icon, Image, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { FaReddit } from "react-icons/fa";
 import useCommunityData from "@/hooks/useCommunityData";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface HeaderProps {
   communityData: Community;
 }
 
 const Header: FC<HeaderProps> = ({ communityData }) => {
-  const { communityStateValue, onJoinOrLeaveCommunity, loading } =
-    useCommunityData();
+  const { onJoinOrLeaveCommunity, loading } = useCommunityData();
+  const communityStateValue = useSelector<RootState, CommunityState>(
+    (state) => state.community
+  );
 
-  const isJoined = !!communityStateValue?.mySnippets?.find(
+  const isJoined = !!communityStateValue.mySnippets.find(
     (item) => item.communityId === communityData.id
   );
 
@@ -38,7 +42,7 @@ const Header: FC<HeaderProps> = ({ communityData }) => {
               fontSize={64}
               position='relative'
               top={-3}
-              color='blue.500'
+              color={"blue.500"}
               border={"4px solid white"}
               borderRadius='50%'
             />

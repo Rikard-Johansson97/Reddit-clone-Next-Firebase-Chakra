@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { auth, firestore } from "@/firebase/clientApp";
 import {
+  addSnippet,
   Community,
   CommunitySnippet,
   CommunityState,
@@ -75,8 +76,8 @@ const useCommunityData = () => {
     } catch (error: any) {
       console.log("getMySnippets Error: ", error);
       setError(error.message);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const joinCommunity = async (communityData: Community) => {
@@ -103,7 +104,7 @@ const useCommunityData = () => {
 
       await batch.commit();
 
-      dispatch(updateMySnippets([newSnippet]));
+      dispatch(addSnippet(newSnippet));
     } catch (error: any) {
       console.log("Join Community Error: ", error);
       setError(error.message);

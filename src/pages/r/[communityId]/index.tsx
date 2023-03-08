@@ -8,6 +8,7 @@ import { firestore } from "@/firebase/clientApp";
 import {
   Community,
   CommunityState,
+  setCurrentCommunity,
   updateCommunityState,
 } from "@/store/communitiesSlice";
 import { doc, getDoc } from "firebase/firestore";
@@ -21,16 +22,11 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: FC<CommunityPageProps> = ({ communityData }) => {
-  console.log("Community data", communityData);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(
-      updateCommunityState({
-        currentCommunity: communityData,
-      } as CommunityState)
-    );
-  }, []);
+    dispatch(setCurrentCommunity(communityData));
+  }, [communityData]);
 
   if (!communityData) {
     return <NotFound />;

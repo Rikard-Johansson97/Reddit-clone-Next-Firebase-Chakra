@@ -45,6 +45,9 @@ const communitySlice = createSlice({
       );
       state.currentCommunity = null;
     },
+    addSnippet: (state, action: PayloadAction<CommunitySnippet>) => {
+      state.mySnippets.push(action.payload);
+    },
     setCurrentCommunity: (state, action: PayloadAction<Community>) => {
       state.currentCommunity = action.payload;
     },
@@ -60,6 +63,7 @@ export const {
   updateCommunityState,
   updateMySnippets,
   leaveCommunityReducer,
+  addSnippet,
   updateCommunityImage,
   setCurrentCommunity,
 } = communitySlice.actions;
