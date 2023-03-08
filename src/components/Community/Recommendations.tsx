@@ -92,59 +92,64 @@ const Recommendations: FC<RecommendationsProps> = ({}) => {
               );
 
               return (
-                <Link key={item.id} href={`/r/${item.id}`}>
-                  <Flex
-                    position='relative'
-                    align='center'
-                    fontSize='10pt'
-                    borderBottom='1px solid'
-                    borderColor='gray.200'
-                    p='10px 12px'
-                    fontWeight={600}>
-                    <Flex width='80%' align='center'>
-                      <Flex width='15%'>
-                        <Text mr={2}>{index + 1}</Text>
-                      </Flex>
-                      <Flex align='center' width='80%'>
-                        {item.imageURL ? (
-                          <Image
-                            borderRadius='full'
-                            boxSize='28px'
-                            src={item.imageURL}
-                            mr={2}
-                            alt='community logo'
-                          />
-                        ) : (
-                          <Icon
-                            as={FaReddit}
-                            fontSize={30}
-                            color='brand.100'
-                            mr={2}
-                          />
-                        )}
-                        <span
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}>{`r/${item.id}`}</span>
-                      </Flex>
+                <Flex
+                  key={item.id}
+                  position='relative'
+                  align='center'
+                  fontSize='10pt'
+                  borderBottom='1px solid'
+                  borderColor='gray.200'
+                  p='10px 12px'
+                  fontWeight={600}>
+                  <Flex width='80%' align='center'>
+                    <Flex width='15%'>
+                      <Text mr={2}>{index + 1}</Text>
                     </Flex>
-                    <Box position='absolute' right='10px'>
-                      <Button
-                        height='22px'
-                        fontSize='8pt'
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onJoinOrLeaveCommunity(item, isJoined);
-                        }}
-                        variant={isJoined ? "outline" : "solid"}
-                        type='button'>
-                        {isJoined ? "Joined" : "Join"}
-                      </Button>
-                    </Box>
+
+                    <Flex align='center' width='80%'>
+                      <Link href={`/r/${item.id}`}>
+                        <Flex align='center'>
+                          {item.imageURL ? (
+                            <Image
+                              borderRadius='full'
+                              boxSize='28px'
+                              src={item.imageURL}
+                              mr={2}
+                              alt='community logo'
+                            />
+                          ) : (
+                            <Icon
+                              as={FaReddit}
+                              fontSize={30}
+                              color='brand.100'
+                              mr={2}
+                            />
+                          )}
+
+                          <span
+                            style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}>{`r/${item.id}`}</span>
+                        </Flex>
+                      </Link>
+                    </Flex>
                   </Flex>
-                </Link>
+                  <Box position='absolute' right='10px'>
+                    <Button
+                      height='22px'
+                      fontSize='8pt'
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onJoinOrLeaveCommunity(item, isJoined);
+                      }}
+                      variant={isJoined ? "outline" : "solid"}
+                      type='button'>
+                      {isJoined ? "Joined" : "Join"}
+                    </Button>
+                  </Box>
+                </Flex>
               );
             })}
             <Box p='10px 20px'>
