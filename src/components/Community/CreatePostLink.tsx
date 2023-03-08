@@ -14,7 +14,7 @@ const CreatePostLink = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const dispatch = useDispatch();
-  const { ToggleMenuOpen } = useDirectory();
+  const { toggleMenuOpen } = useDirectory();
 
   const onClick = () => {
     if (!user) {
@@ -29,7 +29,7 @@ const CreatePostLink = () => {
       return;
     }
 
-    ToggleMenuOpen();
+    toggleMenuOpen();
   };
 
   return (

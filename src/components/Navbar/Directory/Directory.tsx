@@ -17,7 +17,7 @@ import Communities from "./Communities";
 import useDirectory from "@/hooks/useDirectory";
 
 const Directory: FC = () => {
-  const { directoryState, ToggleMenuOpen } = useDirectory();
+  const { directoryState, toggleMenuOpen } = useDirectory();
   const dispatch = useDispatch();
 
   return (
@@ -29,7 +29,7 @@ const Directory: FC = () => {
         mr={2}
         ml={{ base: 0, md: 2 }}
         _hover={{ outline: "1px solid", outlineColor: "gray.200" }}
-        onClick={ToggleMenuOpen}>
+        onClick={toggleMenuOpen}>
         <Flex
           align='center'
           justify={"space-between"}

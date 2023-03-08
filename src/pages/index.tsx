@@ -1,8 +1,103 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import CreatePostLink from "@/components/Community/CreatePostLink";
+import PageContent from "@/components/Layout/PageContent";
+import PostItem from "@/components/posts/PostItem";
+import PostLoader from "@/components/posts/PostLoader";
+import { auth, firestore } from "@/firebase/clientApp";
 import useCommunityData from "@/hooks/useCommunityData";
+import usePosts from "@/hooks/usePosts";
+import { CommunitySnippet, CommunityState } from "@/store/communitiesSlice";
+import { Post, setPosts } from "@/store/postSlice";
+import { RootState } from "@/store/store";
+import { Stack } from "@chakra-ui/react";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Home() {
-  const { communityStateValue } = useCommunityData();
+  const [user, loadingUser] = useAuthState(auth);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const {
+    postsStateValue,
+    setPostStateValue,
+    onSelectPost,
+    onDeletePost,
+    onVote,
+  } = usePosts();
+  const communityStateValue = useSelector<RootState, CommunityState>(
+    (state) => state.community
+  );
+
+  const buildNoUserHomeFeed = async () => {
+    try {
+      const postQuery = query(
+        collection(firestore, "posts"),
+        orderBy("voteStatus", "desc"),
+        limit(10)
+      );
+
+      const postDocs = await getDocs(postQuery);
+      const posts = postDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      dispatch(setPosts(posts as Post[]));
+    } catch (error) {
+      console.log("buildUserHomeFeed", error);
+    }
+  };
+
+  const buildUserHomeFeed = async () => {
+    setLoading(true);
+    try {
+      if (communityStateValue.mySnippets.length) {
+        const myCommunityIds = communityStateValue.mySnippets.map(
+          (snippet) => snippet.communityId
+        );
+
+        const postQuery = query(
+          collection(firestore, "posts"),
+          where("communityId", "in", myCommunityIds),
+          limit(10)
+        );
+
+        const postDocs = await getDocs(postQuery);
+        const posts = postDocs.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        dispatch(setPosts(posts as Post[]));
+      } else {
+        buildNoUserHomeFeed();
+      }
+    } catch (error) {
+      console.log("buildUserHomeFeed", error);
+    }
+    setLoading(false);
+  };
+
+  const getUserPostVotes = () => {};
+
+  useEffect(() => {
+    if (!user && !loadingUser) buildNoUserHomeFeed();
+  }, [user, loadingUser]);
+
+  useEffect(() => {
+    if (communityStateValue.snippetsFetched) buildUserHomeFeed();
+  }, [communityStateValue.snippetsFetched]);
+
   return (
     <>
       <Head>
@@ -11,7 +106,34 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main></main>
+      <PageContent>
+        <>
+          <CreatePostLink />
+          {loading ? (
+            <PostLoader />
+          ) : (
+            <Stack>
+              {postsStateValue.posts.map((post) => (
+                <PostItem
+                  key={post.id}
+                  post={post}
+                  onSelectPost={onSelectPost}
+                  onDeletePost={onDeletePost}
+                  onVote={onVote}
+                  userVoteValue={
+                    postsStateValue.postVotes.find(
+                      (item) => item.postId === post.id
+                    )?.voteValue
+                  }
+                  userISCreator={user?.uid === post.creatorId}
+                  homePage
+                />
+              ))}
+            </Stack>
+          )}
+        </>
+        <>{/*  */}</>
+      </PageContent>
     </>
   );
 }

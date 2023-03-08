@@ -6,6 +6,7 @@ import {
   CommunitySnippet,
   CommunityState,
   setCurrentCommunity,
+  setSnippetsFetched,
   updateMySnippets,
 } from "@/store/communitiesSlice";
 import {
@@ -72,6 +73,7 @@ const useCommunityData = () => {
         ...doc.data(),
       }));
 
+      dispatch(setSnippetsFetched(true));
       dispatch(updateMySnippets(snippets as CommunitySnippet[]));
     } catch (error: any) {
       console.log("getMySnippets Error: ", error);

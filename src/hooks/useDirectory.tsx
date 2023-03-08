@@ -25,11 +25,13 @@ const useDirectory = () => {
     dispatch(selectMenuItem(menuItem));
     router.push(menuItem.link);
     if (directoryState.isOpen) {
-      ToggleMenuOpen();
+      if (directoryState.isOpen) {
+        toggleMenuOpen();
+      }
     }
   };
 
-  const ToggleMenuOpen = () => {
+  const toggleMenuOpen = () => {
     dispatch(toggleMenu());
   };
 
@@ -49,7 +51,7 @@ const useDirectory = () => {
     }
   }, [communityStateValue, communityStateValue.currentCommunity, dispatch]);
 
-  return { directoryState, ToggleMenuOpen, onSelectMenuItem };
+  return { directoryState, toggleMenuOpen, onSelectMenuItem };
 };
 
 export default useDirectory;
