@@ -1,3 +1,4 @@
+import useDirectory from "@/hooks/useDirectory";
 import {
   Box,
   Button,
@@ -14,14 +15,15 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-  Text
+  Text,
 } from "@chakra-ui/react";
 import {
   doc,
   getDoc,
   runTransaction,
-  serverTimestamp
+  serverTimestamp,
 } from "firebase/firestore";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
@@ -43,6 +45,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { toggleMenuOpen } = useDirectory();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -86,6 +90,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           }
         );
       });
+
+      handleClose();
+      toggleMenuOpen();
+      router.push(`r/${name}`);
     } catch (error: any) {
       console.error("HandleCreateCommunity error ", error);
       setNameError(error.message);

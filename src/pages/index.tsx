@@ -34,10 +34,7 @@ export default function Home() {
     onDeletePost,
     onVote,
   } = usePosts();
-  const communityStateValue = useSelector<RootState, CommunityState>(
-    (state) => state.community
-  );
-
+  const { communityStateValue } = useCommunityData();
   const buildNoUserHomeFeed = async () => {
     try {
       const postQuery = query(

@@ -40,7 +40,11 @@ const useCommunityData = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user || !!communityStateValue?.mySnippets?.length) return;
+    if (!user) {
+      dispatch(setSnippetsFetched(false));
+      dispatch(updateMySnippets([]));
+      return;
+    }
 
     getSnippets();
   }, [user]);
